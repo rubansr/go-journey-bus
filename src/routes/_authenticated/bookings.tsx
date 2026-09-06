@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Armchair, Download, MapPin, Share2, Wallet } from "lucide-react";
+import { Armchair, Download, MapPin, Navigation, Share2, Wallet } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,13 +42,15 @@ function BookingsPage() {
   });
 
   async function cancel(id: string) {
-    const { error } = await supabase.from("bookings").update({ status: "cancelled" }).eq("id", id);
+    const { error } = await supabase.rpc("cancel_booking", { p_booking_id: id });
     if (error) {
       toast.error(error.message);
       return;
     }
     toast.success(t("refund_note"));
     await queryClient.invalidateQueries({ queryKey: ["my-bookings"] });
+    await queryClient.invalidateQueries({ queryKey: ["wallet"] });
+    await queryClient.invalidateQueries({ queryKey: ["wallet-txns"] });
   }
 
   return (
@@ -117,7 +119,21 @@ function BookingsPage() {
                     ))}
                   </ul>
 
+                  {cancelled && (
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      {t("refund_status")}:{" "}
+                      {b.refund_status === "credited"
+                        ? `${t("refund_credited")} — ${inr(Number(b.refund_amount))}`
+                        : t("refund_not_eligible")}
+                    </p>
+                  )}
+
                   <div className="mt-5 flex flex-wrap gap-2">
+                    <Button asChild size="sm" className="gap-2">
+                      <Link to="/ticket/$bookingId" params={{ bookingId: b.id }}>
+                        <Navigation className="size-4" /> {t("view_ticket")}
+                      </Link>
+                    </Button>
                     <Button variant="outline" size="sm" className="gap-2" onClick={() => window.print()}>
                       <Download className="size-4" /> PDF ticket
                     </Button>

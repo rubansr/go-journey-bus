@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bus, Languages, LogOut, Menu, Moon, Sun, Ticket } from "lucide-react";
+import { Bus, Languages, LogOut, Menu, Moon, ShieldCheck, Sun, Ticket, WalletMinimal } from "lucide-react";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -13,6 +13,7 @@ import {
 import { useI18n } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useSession } from "@/hooks/use-session";
+import { useRoles } from "@/hooks/use-roles";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,7 @@ export function SiteHeader() {
   const { t, lang, setLang } = useI18n();
   const { theme, toggle } = useTheme();
   const { user } = useSession();
+  const { isStaff } = useRoles();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -51,6 +53,24 @@ export function SiteHeader() {
       >
         {t("nav_bookings")}
       </Link>
+      {user && (
+        <Link
+          to="/wallet"
+          className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+          onClick={() => setOpen(false)}
+        >
+          {t("nav_wallet")}
+        </Link>
+      )}
+      {isStaff && (
+        <Link
+          to="/admin"
+          className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+          onClick={() => setOpen(false)}
+        >
+          {t("nav_admin")}
+        </Link>
+      )}
     </>
   );
 
@@ -94,6 +114,14 @@ export function SiteHeader() {
                 <DropdownMenuItem onClick={() => navigate({ to: "/bookings" })}>
                   <Ticket className="mr-2 size-4" /> {t("my_tickets")}
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate({ to: "/wallet" })}>
+                  <WalletMinimal className="mr-2 size-4" /> {t("nav_wallet")}
+                </DropdownMenuItem>
+                {isStaff && (
+                  <DropdownMenuItem onClick={() => navigate({ to: "/admin" })}>
+                    <ShieldCheck className="mr-2 size-4" /> {t("nav_admin")}
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={signOut}>
                   <LogOut className="mr-2 size-4" /> {t("sign_out")}
                 </DropdownMenuItem>
