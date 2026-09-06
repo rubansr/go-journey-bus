@@ -110,13 +110,25 @@ function TripPage() {
       navigate({ to: "/auth", search: { redirect: `/trip/${tripId}` } });
       return;
     }
-    if (selected.length === 0) return toast.error("Select at least one seat.");
-    if (!boarding || !dropping) return toast.error("Choose boarding and dropping points.");
+    if (selected.length === 0) {
+      toast.error("Select at least one seat.");
+      return;
+    }
+    if (!boarding || !dropping) {
+      toast.error("Choose boarding and dropping points.");
+      return;
+    }
     for (const seat of selected) {
       const p = passengers[seat];
-      if (!p?.name || !p.age) return toast.error(`Add passenger details for seat ${seat}.`);
+      if (!p?.name || !p.age) {
+        toast.error(`Add passenger details for seat ${seat}.`);
+        return;
+      }
     }
-    if (!phone || phone.replace(/\D/g, "").length < 10) return toast.error("Enter a valid mobile number.");
+    if (!phone || phone.replace(/\D/g, "").length < 10) {
+      toast.error("Enter a valid mobile number.");
+      return;
+    }
 
     setSubmitting(true);
     const { data, error } = await supabase
@@ -128,7 +140,7 @@ function TripPage() {
         passengers: selected.map((s) => ({ seat: s, ...passengers[s] })),
         boarding_point: boarding,
         dropping_point: dropping,
-        contact_email: email || user.email,
+        contact_email: email || user.email || null,
         contact_phone: phone,
         total_amount: total,
         payment_method: payment,
