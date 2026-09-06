@@ -17,6 +17,7 @@ export type Database = {
       bookings: {
         Row: {
           boarding_point: string | null
+          cancelled_at: string | null
           contact_email: string | null
           contact_phone: string | null
           created_at: string
@@ -25,14 +26,18 @@ export type Database = {
           passengers: Json
           payment_method: string
           pnr: string
+          refund_amount: number
+          refund_status: string
           seats: string[]
           status: string
           total_amount: number
           trip_id: string
           user_id: string
+          wallet_amount: number
         }
         Insert: {
           boarding_point?: string | null
+          cancelled_at?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
@@ -41,14 +46,18 @@ export type Database = {
           passengers?: Json
           payment_method?: string
           pnr?: string
+          refund_amount?: number
+          refund_status?: string
           seats: string[]
           status?: string
           total_amount: number
           trip_id: string
           user_id?: string
+          wallet_amount?: number
         }
         Update: {
           boarding_point?: string | null
+          cancelled_at?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
@@ -57,11 +66,14 @@ export type Database = {
           passengers?: Json
           payment_method?: string
           pnr?: string
+          refund_amount?: number
+          refund_status?: string
           seats?: string[]
           status?: string
           total_amount?: number
           trip_id?: string
           user_id?: string
+          wallet_amount?: number
         }
         Relationships: [
           {
@@ -132,6 +144,7 @@ export type Database = {
           booked_seats: string[]
           bus_type: string
           created_at: string
+          delay_mins: number
           demand_level: string
           depart_at: string
           dropping_points: string[]
@@ -143,6 +156,9 @@ export type Database = {
           rating: number
           to_city: string
           total_seats: number
+          tracking_note: string | null
+          trip_status: string
+          updated_at: string
           women_safe: boolean
         }
         Insert: {
@@ -152,6 +168,7 @@ export type Database = {
           booked_seats?: string[]
           bus_type: string
           created_at?: string
+          delay_mins?: number
           demand_level?: string
           depart_at: string
           dropping_points?: string[]
@@ -163,6 +180,9 @@ export type Database = {
           rating?: number
           to_city: string
           total_seats?: number
+          tracking_note?: string | null
+          trip_status?: string
+          updated_at?: string
           women_safe?: boolean
         }
         Update: {
@@ -172,6 +192,7 @@ export type Database = {
           booked_seats?: string[]
           bus_type?: string
           created_at?: string
+          delay_mins?: number
           demand_level?: string
           depart_at?: string
           dropping_points?: string[]
@@ -183,6 +204,9 @@ export type Database = {
           rating?: number
           to_city?: string
           total_seats?: number
+          tracking_note?: string | null
+          trip_status?: string
+          updated_at?: string
           women_safe?: boolean
         }
         Relationships: [
@@ -195,15 +219,163 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          booking_id: string | null
+          created_at: string
+          description: string
+          id: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          booking_id?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          kind: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallets: {
+        Row: {
+          balance: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      book_trip: {
+        Args: {
+          p_boarding: string
+          p_contact_email: string
+          p_contact_phone: string
+          p_dropping: string
+          p_passengers: Json
+          p_payment_method: string
+          p_seats: string[]
+          p_trip_id: string
+          p_use_wallet?: boolean
+        }
+        Returns: {
+          boarding_point: string | null
+          cancelled_at: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          dropping_point: string | null
+          id: string
+          passengers: Json
+          payment_method: string
+          pnr: string
+          refund_amount: number
+          refund_status: string
+          seats: string[]
+          status: string
+          total_amount: number
+          trip_id: string
+          user_id: string
+          wallet_amount: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "bookings"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      bootstrap_admin: { Args: never; Returns: boolean }
+      cancel_booking: {
+        Args: { p_booking_id: string }
+        Returns: {
+          boarding_point: string | null
+          cancelled_at: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          dropping_point: string | null
+          id: string
+          passengers: Json
+          payment_method: string
+          pnr: string
+          refund_amount: number
+          refund_status: string
+          seats: string[]
+          status: string
+          total_amount: number
+          trip_id: string
+          user_id: string
+          wallet_amount: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "bookings"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      topup_wallet: {
+        Args: { p_amount: number; p_method?: string }
+        Returns: number
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "operator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -330,6 +502,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "operator", "user"],
+    },
   },
 } as const

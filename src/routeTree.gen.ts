@@ -13,8 +13,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedBookingsRouteImport } from './routes/_authenticated/bookings'
+import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as TripTripIdRouteImport } from './routes/trip.$tripId'
+import { Route as AuthenticatedTicketBookingIdRouteImport } from './routes/_authenticated/ticket.$bookingId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -35,9 +38,19 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedBookingsRoute = AuthenticatedBookingsRouteImport.update({
   id: '/bookings',
   path: '/bookings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const TripTripIdRoute = TripTripIdRouteImport.update({
@@ -45,20 +58,32 @@ const TripTripIdRoute = TripTripIdRouteImport.update({
   path: '/trip/$tripId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedTicketBookingIdRoute =
+  AuthenticatedTicketBookingIdRouteImport.update({
+    id: '/ticket/$bookingId',
+    path: '/ticket/$bookingId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/bookings': typeof AuthenticatedBookingsRoute
+  '/wallet': typeof AuthenticatedWalletRoute
   '/trip/$tripId': typeof TripTripIdRoute
+  '/ticket/$bookingId': typeof AuthenticatedTicketBookingIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/bookings': typeof AuthenticatedBookingsRoute
+  '/wallet': typeof AuthenticatedWalletRoute
   '/trip/$tripId': typeof TripTripIdRoute
+  '/ticket/$bookingId': typeof AuthenticatedTicketBookingIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -66,22 +91,44 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/bookings': typeof AuthenticatedBookingsRoute
+  '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/trip/$tripId': typeof TripTripIdRoute
+  '/_authenticated/ticket/$bookingId': typeof AuthenticatedTicketBookingIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/search' | '/bookings' | '/trip/$tripId'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/search'
+    | '/admin'
+    | '/bookings'
+    | '/wallet'
+    | '/trip/$tripId'
+    | '/ticket/$bookingId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/search' | '/bookings' | '/trip/$tripId'
+  to:
+    | '/'
+    | '/auth'
+    | '/search'
+    | '/admin'
+    | '/bookings'
+    | '/wallet'
+    | '/trip/$tripId'
+    | '/ticket/$bookingId'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/search'
+    | '/_authenticated/admin'
     | '/_authenticated/bookings'
+    | '/_authenticated/wallet'
     | '/trip/$tripId'
+    | '/_authenticated/ticket/$bookingId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -122,11 +169,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/bookings': {
       id: '/_authenticated/bookings'
       path: '/bookings'
       fullPath: '/bookings'
       preLoaderRoute: typeof AuthenticatedBookingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/wallet': {
+      id: '/_authenticated/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/trip/$tripId': {
@@ -136,15 +197,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripTripIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/ticket/$bookingId': {
+      id: '/_authenticated/ticket/$bookingId'
+      path: '/ticket/$bookingId'
+      fullPath: '/ticket/$bookingId'
+      preLoaderRoute: typeof AuthenticatedTicketBookingIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedBookingsRoute: typeof AuthenticatedBookingsRoute
+  AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
+  AuthenticatedTicketBookingIdRoute: typeof AuthenticatedTicketBookingIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedBookingsRoute: AuthenticatedBookingsRoute,
+  AuthenticatedWalletRoute: AuthenticatedWalletRoute,
+  AuthenticatedTicketBookingIdRoute: AuthenticatedTicketBookingIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

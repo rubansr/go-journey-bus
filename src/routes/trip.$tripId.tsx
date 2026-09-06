@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BrainCircuit, CreditCard, Loader2, Lock, ShieldCheck, Sparkles } from "lucide-react";
@@ -22,6 +22,7 @@ import {
   recommendSeats,
 } from "@/lib/booking";
 import { useI18n } from "@/lib/i18n";
+import { useWalletBalance } from "@/hooks/use-wallet";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/trip/$tripId")({
@@ -53,6 +54,9 @@ function TripPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [payment, setPayment] = useState("UPI");
+  const [useWallet, setUseWallet] = useState(false);
+  const queryClient = useQueryClient();
+  const { data: walletBalance = 0 } = useWalletBalance();
   const [womenSafety, setWomenSafety] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -131,22 +135,17 @@ function TripPage() {
     }
 
     setSubmitting(true);
-    const { data, error } = await supabase
-      .from("bookings")
-      .insert({
-        user_id: user.id,
-        trip_id: tripId,
-        seats: selected,
-        passengers: selected.map((s) => ({ seat: s, ...passengers[s] })),
-        boarding_point: boarding,
-        dropping_point: dropping,
-        contact_email: email || user.email || null,
-        contact_phone: phone,
-        total_amount: total,
-        payment_method: payment,
-      })
-      .select("pnr")
-      .single();
+    const { data, error } = await supabase.rpc("book_trip", {
+      p_trip_id: tripId,
+      p_seats: selected,
+      p_passengers: selected.map((s) => ({ seat: s, ...passengers[s] })),
+      p_boarding: boarding,
+      p_dropping: dropping,
+      p_contact_email: email || user.email || "",
+      p_contact_phone: phone,
+      p_payment_method: payment,
+      p_use_wallet: useWallet,
+    });
     setSubmitting(false);
 
     if (error) {
@@ -154,8 +153,10 @@ function TripPage() {
       void refetch();
       return;
     }
-    toast.success(`${t("booking_confirmed")} · PNR ${data.pnr}`);
-    navigate({ to: "/bookings" });
+    const booking = data as unknown as { id: string; pnr: string };
+    await queryClient.invalidateQueries({ queryKey: ["wallet"] });
+    toast.success(`${t("booking_confirmed")} · PNR ${booking.pnr}`);
+    navigate({ to: "/ticket/$bookingId", params: { bookingId: booking.id } });
   }
 
   if (isLoading) {
@@ -393,8 +394,27 @@ function TripPage() {
                 <p className="mb-2 font-semibold">{t("fare_breakdown")}</p>
                 <Row label={`${t("base_fare")} × ${selected.length || 0}`} value={inr(base)} />
                 <Row label={t("gst")} value={inr(gst)} />
+                {walletBalance > 0 && (
+                  <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-muted/60 p-3">
+                    <label htmlFor="use-wallet" className="text-sm">
+                      <span className="font-medium">{t("use_wallet")}</span>
+                      <span className="block text-xs text-muted-foreground">
+                        {t("wallet_balance")}: {inr(walletBalance)}
+                      </span>
+                    </label>
+                    <Switch id="use-wallet" checked={useWallet} onCheckedChange={setUseWallet} />
+                  </div>
+                )}
+                {useWallet && walletBalance > 0 && (
+                  <div className="mt-2">
+                    <Row label={t("paid_from_wallet")} value={`- ${inr(Math.min(walletBalance, total))}`} />
+                  </div>
+                )}
                 <div className="mt-2 border-t border-border pt-2">
                   <Row label={t("total")} value={inr(total)} strong />
+                  {useWallet && walletBalance > 0 && (
+                    <Row label={t("payable_now")} value={inr(Math.max(0, total - walletBalance))} />
+                  )}
                 </div>
               </div>
 
