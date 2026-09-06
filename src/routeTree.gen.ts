@@ -14,7 +14,9 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as AuthenticatedBookingsRouteImport } from './routes/_authenticated/bookings'
+import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as TripTripIdRouteImport } from './routes/trip.$tripId'
+import { Route as AuthenticatedTicketBookingIdRouteImport } from './routes/_authenticated/ticket.$bookingId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,25 +42,40 @@ const AuthenticatedBookingsRoute = AuthenticatedBookingsRouteImport.update({
   path: '/bookings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const TripTripIdRoute = TripTripIdRouteImport.update({
   id: '/trip/$tripId',
   path: '/trip/$tripId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedTicketBookingIdRoute =
+  AuthenticatedTicketBookingIdRouteImport.update({
+    id: '/ticket/$bookingId',
+    path: '/ticket/$bookingId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
   '/bookings': typeof AuthenticatedBookingsRoute
+  '/wallet': typeof AuthenticatedWalletRoute
   '/trip/$tripId': typeof TripTripIdRoute
+  '/ticket/$bookingId': typeof AuthenticatedTicketBookingIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
   '/bookings': typeof AuthenticatedBookingsRoute
+  '/wallet': typeof AuthenticatedWalletRoute
   '/trip/$tripId': typeof TripTripIdRoute
+  '/ticket/$bookingId': typeof AuthenticatedTicketBookingIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -67,13 +84,29 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
   '/_authenticated/bookings': typeof AuthenticatedBookingsRoute
+  '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/trip/$tripId': typeof TripTripIdRoute
+  '/_authenticated/ticket/$bookingId': typeof AuthenticatedTicketBookingIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/search' | '/bookings' | '/trip/$tripId'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/search'
+    | '/bookings'
+    | '/wallet'
+    | '/trip/$tripId'
+    | '/ticket/$bookingId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/search' | '/bookings' | '/trip/$tripId'
+  to:
+    | '/'
+    | '/auth'
+    | '/search'
+    | '/bookings'
+    | '/wallet'
+    | '/trip/$tripId'
+    | '/ticket/$bookingId'
   id:
     | '__root__'
     | '/'
@@ -81,7 +114,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/search'
     | '/_authenticated/bookings'
+    | '/_authenticated/wallet'
     | '/trip/$tripId'
+    | '/_authenticated/ticket/$bookingId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -129,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBookingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/wallet': {
+      id: '/_authenticated/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof AuthenticatedWalletRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/trip/$tripId': {
       id: '/trip/$tripId'
       path: '/trip/$tripId'
@@ -136,15 +178,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripTripIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/ticket/$bookingId': {
+      id: '/_authenticated/ticket/$bookingId'
+      path: '/ticket/$bookingId'
+      fullPath: '/ticket/$bookingId'
+      preLoaderRoute: typeof AuthenticatedTicketBookingIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedBookingsRoute: typeof AuthenticatedBookingsRoute
+  AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
+  AuthenticatedTicketBookingIdRoute: typeof AuthenticatedTicketBookingIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBookingsRoute: AuthenticatedBookingsRoute,
+  AuthenticatedWalletRoute: AuthenticatedWalletRoute,
+  AuthenticatedTicketBookingIdRoute: AuthenticatedTicketBookingIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
