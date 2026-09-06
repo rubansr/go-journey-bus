@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BrainCircuit, CreditCard, Loader2, Lock, ShieldCheck, Sparkles } from "lucide-react";
@@ -55,6 +55,8 @@ function TripPage() {
   const [phone, setPhone] = useState("");
   const [payment, setPayment] = useState("UPI");
   const [useWallet, setUseWallet] = useState(false);
+  const queryClient = useQueryClient();
+  const { data: walletBalance = 0 } = useWalletBalance();
   const [womenSafety, setWomenSafety] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -392,8 +394,27 @@ function TripPage() {
                 <p className="mb-2 font-semibold">{t("fare_breakdown")}</p>
                 <Row label={`${t("base_fare")} × ${selected.length || 0}`} value={inr(base)} />
                 <Row label={t("gst")} value={inr(gst)} />
+                {walletBalance > 0 && (
+                  <div className="mt-3 flex items-center justify-between gap-3 rounded-lg bg-muted/60 p-3">
+                    <label htmlFor="use-wallet" className="text-sm">
+                      <span className="font-medium">{t("use_wallet")}</span>
+                      <span className="block text-xs text-muted-foreground">
+                        {t("wallet_balance")}: {inr(walletBalance)}
+                      </span>
+                    </label>
+                    <Switch id="use-wallet" checked={useWallet} onCheckedChange={setUseWallet} />
+                  </div>
+                )}
+                {useWallet && walletBalance > 0 && (
+                  <div className="mt-2">
+                    <Row label={t("paid_from_wallet")} value={`- ${inr(Math.min(walletBalance, total))}`} />
+                  </div>
+                )}
                 <div className="mt-2 border-t border-border pt-2">
                   <Row label={t("total")} value={inr(total)} strong />
+                  {useWallet && walletBalance > 0 && (
+                    <Row label={t("payable_now")} value={inr(Math.max(0, total - walletBalance))} />
+                  )}
                 </div>
               </div>
 
