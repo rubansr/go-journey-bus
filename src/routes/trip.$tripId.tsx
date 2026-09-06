@@ -141,7 +141,7 @@ function TripPage() {
       p_passengers: selected.map((s) => ({ seat: s, ...passengers[s] })),
       p_boarding: boarding,
       p_dropping: dropping,
-      p_contact_email: email || user.email || null,
+      p_contact_email: email || user.email || "",
       p_contact_phone: phone,
       p_payment_method: payment,
       p_use_wallet: useWallet,
