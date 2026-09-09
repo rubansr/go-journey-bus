@@ -146,7 +146,7 @@ export function NxtixaAi() {
     <>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => { console.log("AI toggle"); setOpen((v) => !v); }}
         aria-label={open ? "Close NXTIXA AI" : "Open NXTIXA AI"}
         aria-expanded={open}
         className={cn(
