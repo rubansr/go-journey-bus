@@ -168,7 +168,7 @@ export function NxtixaAi() {
           aria-label="NXTIXA AI travel assistant"
           className={cn(
             "fixed z-[60] flex flex-col overflow-hidden rounded-3xl border border-border/60 shadow-2xl",
-            "bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60",
+            "bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80",
             "inset-x-3 bottom-24 top-16 sm:inset-x-auto sm:top-auto sm:right-5 sm:h-[min(38rem,80vh)] sm:w-[26rem]",
           )}
         >
@@ -218,7 +218,7 @@ export function NxtixaAi() {
                     <MessageContent
                       className={cn(
                         m.role === "user"
-                          ? "bg-primary text-primary-foreground"
+                          ? "group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground"
                           : "bg-transparent p-0 text-foreground",
                       )}
                     >
