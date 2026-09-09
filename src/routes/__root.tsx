@@ -16,6 +16,7 @@ import { ThemeProvider } from "@/lib/theme";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Toaster } from "@/components/ui/sonner";
+import { NxtixaAi } from "@/components/nxtixa-ai";
 import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
@@ -149,6 +150,7 @@ function RootComponent() {
             </main>
             <SiteFooter />
           </div>
+          <NxtixaAi />
           <Toaster richColors position="top-center" />
         </LanguageProvider>
       </ThemeProvider>

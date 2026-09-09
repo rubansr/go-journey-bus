@@ -16,6 +16,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedBookingsRouteImport } from './routes/_authenticated/bookings'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as TripTripIdRouteImport } from './routes/trip.$tripId'
 import { Route as AuthenticatedTicketBookingIdRouteImport } from './routes/_authenticated/ticket.$bookingId'
 
@@ -53,6 +54,11 @@ const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TripTripIdRoute = TripTripIdRouteImport.update({
   id: '/trip/$tripId',
   path: '/trip/$tripId',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/bookings': typeof AuthenticatedBookingsRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/api/chat': typeof ApiChatRoute
   '/trip/$tripId': typeof TripTripIdRoute
   '/ticket/$bookingId': typeof AuthenticatedTicketBookingIdRoute
 }
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/bookings': typeof AuthenticatedBookingsRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/api/chat': typeof ApiChatRoute
   '/trip/$tripId': typeof TripTripIdRoute
   '/ticket/$bookingId': typeof AuthenticatedTicketBookingIdRoute
 }
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/bookings': typeof AuthenticatedBookingsRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
+  '/api/chat': typeof ApiChatRoute
   '/trip/$tripId': typeof TripTripIdRoute
   '/_authenticated/ticket/$bookingId': typeof AuthenticatedTicketBookingIdRoute
 }
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/bookings'
     | '/wallet'
+    | '/api/chat'
     | '/trip/$tripId'
     | '/ticket/$bookingId'
   fileRoutesByTo: FileRoutesByTo
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/bookings'
     | '/wallet'
+    | '/api/chat'
     | '/trip/$tripId'
     | '/ticket/$bookingId'
   id:
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/bookings'
     | '/_authenticated/wallet'
+    | '/api/chat'
     | '/trip/$tripId'
     | '/_authenticated/ticket/$bookingId'
   fileRoutesById: FileRoutesById
@@ -136,6 +148,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   SearchRoute: typeof SearchRoute
+  ApiChatRoute: typeof ApiChatRoute
   TripTripIdRoute: typeof TripTripIdRoute
 }
 
@@ -190,6 +203,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trip/$tripId': {
       id: '/trip/$tripId'
       path: '/trip/$tripId'
@@ -229,6 +249,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   SearchRoute: SearchRoute,
+  ApiChatRoute: ApiChatRoute,
   TripTripIdRoute: TripTripIdRoute,
 }
 export const routeTree = rootRouteImport
