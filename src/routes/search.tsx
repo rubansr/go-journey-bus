@@ -237,7 +237,7 @@ function SearchPage() {
                   )}
 
                   <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                    {trip.amenities.map((a) => (
+                    {trip.amenities.filter((a) => a !== "Live tracking").map((a) => (
                       <span key={a} className="flex items-center gap-1 rounded-full bg-muted px-2.5 py-1">
                         <Wifi className="size-3" aria-hidden /> {a}
                       </span>
@@ -255,7 +255,7 @@ function SearchPage() {
                   </div>
 
                   <div className="mt-4 flex flex-wrap gap-3 text-xs">
-                    {insight.fillsFast && (
+                    {insight.fillsFast && insight.occupancy > 0.2 && (
                       <span className="flex items-center gap-1 rounded-full bg-destructive/10 px-2.5 py-1 font-medium text-destructive">
                         <Flame className="size-3.5" /> Fills fast — {Math.round(insight.occupancy * 100)}% booked
                       </span>
