@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Armchair, Flame, ShieldCheck, Star, TrendingUp, Wifi } from "lucide-react";
+import { Armchair, BusFront, Flame, MapPin, Navigation, ShieldCheck, Star, TrendingUp, Wifi } from "lucide-react";
 
 import { SearchForm } from "@/components/search-form";
 import { Badge } from "@/components/ui/badge";
@@ -12,13 +12,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { durationLabel, fareInsight, formatDay, formatTime, inr, todayISO } from "@/lib/booking";
 import { useI18n } from "@/lib/i18n";
 
-type Search = { from: string; to: string; date: string };
+type Search = { from: string; to: string; date: string; pax: number };
 
 export const Route = createFileRoute("/search")({
   validateSearch: (search: Record<string, unknown>): Search => ({
     from: typeof search["from"] === "string" ? search["from"] : "Chennai",
-    to: typeof search["to"] === "string" ? search["to"] : "Coimbatore",
+    to: typeof search["to"] === "string" ? search["to"] : "Nagercoil",
     date: typeof search["date"] === "string" ? search["date"] : todayISO(),
+    pax: Math.max(1, Math.min(6, Number(search["pax"]) || 1)),
   }),
   head: () => ({
     meta: [
@@ -32,17 +33,44 @@ export const Route = createFileRoute("/search")({
 });
 
 const SORTS = [
-  { id: "depart", label: "Departure" },
-  { id: "fare", label: "Cheapest" },
-  { id: "rating", label: "Top rated" },
+  { id: "depart", en: "Departure", ta: "புறப்பாடு" },
+  { id: "fare", en: "Cheapest", ta: "மலிவானது" },
+  { id: "fastest", en: "Fastest", ta: "வேகமானது" },
+  { id: "arrive", en: "Earliest arrival", ta: "முதல் வருகை" },
+  { id: "rating", en: "Top rated", ta: "சிறந்த மதிப்பீடு" },
+] as const;
+
+type SortId = (typeof SORTS)[number]["id"];
+
+const FILTERS = [
+  { id: "ac", en: "AC", ta: "ஏசி" },
+  { id: "nonac", en: "Non-AC", ta: "நான்-ஏசி" },
+  { id: "sleeper", en: "Sleeper", ta: "ஸ்லீப்பர்" },
+  { id: "seater", en: "Seater", ta: "சீட்டர்" },
+  { id: "women", en: "Women friendly", ta: "பெண்களுக்கு பாதுகாப்பு" },
+  { id: "tracking", en: "Live tracking", ta: "நேரடி கண்காணிப்பு" },
+  { id: "verified", en: "Verified only", ta: "சரிபார்க்கப்பட்டவை" },
+] as const;
+
+type FilterId = (typeof FILTERS)[number]["id"];
+
+const TIME_BANDS = [
+  { id: "early", en: "Before 10 am", ta: "காலை 10 முன்", from: 0, to: 10 },
+  { id: "day", en: "10 am – 5 pm", ta: "10 – 5", from: 10, to: 17 },
+  { id: "evening", en: "5 pm – 9 pm", ta: "மாலை 5 – 9", from: 17, to: 21 },
+  { id: "night", en: "After 9 pm", ta: "இரவு 9 பின்", from: 21, to: 24 },
 ] as const;
 
 function SearchPage() {
-  const { from, to, date } = Route.useSearch();
-  const { t } = useI18n();
-  const [sort, setSort] = useState<(typeof SORTS)[number]["id"]>("depart");
-  const [acOnly, setAcOnly] = useState(false);
-  const [sleeperOnly, setSleeperOnly] = useState(false);
+  const { from, to, date, pax } = Route.useSearch();
+  const { t, lang } = useI18n();
+  const [sort, setSort] = useState<SortId>("depart");
+  const [filters, setFilters] = useState<FilterId[]>([]);
+  const [band, setBand] = useState<string | null>(null);
+
+  const toggle = (id: FilterId) =>
+    setFilters((prev) => (prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]));
+  const has = (id: FilterId) => filters.includes(id);
 
   const { data, isLoading } = useQuery({
     queryKey: ["trips", from, to, date],
@@ -62,18 +90,39 @@ function SearchPage() {
     },
   });
 
-  const trips = (data ?? [])
-    .filter((tr) => (acOnly ? tr.bus_type.includes("AC") && !tr.bus_type.startsWith("Non") : true))
-    .filter((tr) => (sleeperOnly ? tr.bus_type.includes("Sleeper") : true))
+  const all = data ?? [];
+  const trips = all
+    .filter((tr) => tr.total_seats - tr.booked_seats.length >= pax)
+    .filter((tr) => (has("ac") ? tr.ac ?? tr.bus_type.includes("AC") : true))
+    .filter((tr) => (has("nonac") ? !(tr.ac ?? tr.bus_type.includes("AC")) : true))
+    .filter((tr) => (has("sleeper") ? (tr.berth_type ?? tr.bus_type).toLowerCase().includes("sleeper") : true))
+    .filter((tr) => (has("seater") ? (tr.berth_type ?? tr.bus_type).toLowerCase().includes("seater") : true))
+    .filter((tr) => (has("women") ? tr.women_safe : true))
+    .filter((tr) => (has("tracking") ? tr.live_tracking : true))
+    .filter((tr) => (has("verified") ? tr.operators?.verified : true))
+    .filter((tr) => {
+      if (!band) return true;
+      const b = TIME_BANDS.find((x) => x.id === band)!;
+      const h = new Date(tr.depart_at).getHours();
+      return h >= b.from && h < b.to;
+    })
     .sort((a, b) => {
       if (sort === "fare") return Number(a.fare) - Number(b.fare);
       if (sort === "rating") return Number(b.rating) - Number(a.rating);
+      if (sort === "arrive") return new Date(a.arrive_at).getTime() - new Date(b.arrive_at).getTime();
+      if (sort === "fastest") {
+        const dur = (x: typeof a) => new Date(x.arrive_at).getTime() - new Date(x.depart_at).getTime();
+        return dur(a) - dur(b);
+      }
       return new Date(a.depart_at).getTime() - new Date(b.depart_at).getTime();
     });
 
+  const cheapest = all.length ? Math.min(...all.map((x) => Number(x.fare))) : 0;
+  const label = (o: { en: string; ta: string }) => (lang === "ta" ? o.ta : o.en);
+
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8">
-      <SearchForm compact initial={{ from, to, date }} />
+      <SearchForm compact initial={{ from, to, date, pax }} />
 
       <div className="mt-6 flex flex-wrap items-center gap-2">
         <p className="mr-2 text-sm text-muted-foreground">
@@ -87,25 +136,34 @@ function SearchPage() {
             onClick={() => setSort(s.id)}
             className="rounded-full"
           >
-            {s.label}
+            {label(s)}
           </Button>
         ))}
-        <Button
-          size="sm"
-          variant={acOnly ? "default" : "outline"}
-          className="rounded-full"
-          onClick={() => setAcOnly((v) => !v)}
-        >
-          AC
-        </Button>
-        <Button
-          size="sm"
-          variant={sleeperOnly ? "default" : "outline"}
-          className="rounded-full"
-          onClick={() => setSleeperOnly((v) => !v)}
-        >
-          Sleeper
-        </Button>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        {FILTERS.map((f) => (
+          <Button
+            key={f.id}
+            size="sm"
+            variant={has(f.id) ? "default" : "outline"}
+            className="rounded-full"
+            onClick={() => toggle(f.id)}
+          >
+            {label(f)}
+          </Button>
+        ))}
+        {TIME_BANDS.map((b) => (
+          <Button
+            key={b.id}
+            size="sm"
+            variant={band === b.id ? "secondary" : "ghost"}
+            className="rounded-full"
+            onClick={() => setBand((prev) => (prev === b.id ? null : b.id))}
+          >
+            {label(b)}
+          </Button>
+        ))}
       </div>
 
       <div className="mt-6 space-y-4">
@@ -126,6 +184,7 @@ function SearchPage() {
             booked_seats: trip.booked_seats,
             total_seats: trip.total_seats,
           });
+          const isCheapest = Number(trip.fare) === cheapest;
           return (
             <Card key={trip.id} className="overflow-hidden transition hover:shadow-lg">
               <CardContent className="grid gap-6 p-6 lg:grid-cols-[1fr_auto]">
@@ -134,13 +193,21 @@ function SearchPage() {
                     <h2 className="font-display text-lg font-semibold">{trip.operators?.name}</h2>
                     {trip.operators?.verified && (
                       <Badge variant="secondary" className="gap-1 text-success">
-                        <ShieldCheck className="size-3.5" /> Verified
+                        <ShieldCheck className="size-3.5" /> {t("verified")}
                       </Badge>
                     )}
                     <Badge variant="outline" className="gap-1">
                       <Star className="size-3.5 fill-warning text-warning" /> {Number(trip.rating).toFixed(1)}
                     </Badge>
+                    {isCheapest && (
+                      <Badge className="bg-success/15 text-success hover:bg-success/15">{t("cheapest_tag")}</Badge>
+                    )}
                     <span className="text-xs text-muted-foreground">{trip.bus_type}</span>
+                    {trip.bus_number && (
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <BusFront className="size-3.5" /> {trip.bus_number}
+                      </span>
+                    )}
                   </div>
 
                   <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
@@ -159,12 +226,32 @@ function SearchPage() {
                     </div>
                   </div>
 
+                  {(trip.boarding_points.length > 0 || trip.dropping_points.length > 0) && (
+                    <p className="mt-3 flex items-start gap-1.5 text-xs text-muted-foreground">
+                      <MapPin className="mt-0.5 size-3.5 shrink-0" />
+                      <span>
+                        {trip.boarding_points.slice(0, 3).join(" · ")}
+                        {trip.dropping_points.length > 0 && ` → ${trip.dropping_points.slice(0, 2).join(" · ")}`}
+                      </span>
+                    </p>
+                  )}
+
                   <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
                     {trip.amenities.map((a) => (
                       <span key={a} className="flex items-center gap-1 rounded-full bg-muted px-2.5 py-1">
                         <Wifi className="size-3" aria-hidden /> {a}
                       </span>
                     ))}
+                    {trip.live_tracking && (
+                      <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-primary">
+                        <Navigation className="size-3" /> {t("live_tracking")}
+                      </span>
+                    )}
+                    {trip.women_safe && (
+                      <span className="flex items-center gap-1 rounded-full bg-accent px-2.5 py-1">
+                        <ShieldCheck className="size-3" /> {t("women_friendly")}
+                      </span>
+                    )}
                   </div>
 
                   <div className="mt-4 flex flex-wrap gap-3 text-xs">
@@ -185,7 +272,14 @@ function SearchPage() {
                 </div>
 
                 <div className="flex flex-row items-end justify-between gap-4 lg:flex-col lg:items-end lg:justify-center">
-                  <p className="text-2xl font-bold">{inr(Number(trip.fare))}</p>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold">{inr(Number(trip.fare))}</p>
+                    {pax > 1 && (
+                      <p className="text-xs text-muted-foreground">
+                        {inr(Number(trip.fare) * pax)} · {pax} {t("passengers")}
+                      </p>
+                    )}
+                  </div>
                   <Button asChild size="lg" className="font-semibold">
                     <Link to="/trip/$tripId" params={{ tripId: trip.id }}>
                       {t("select_seats")}
