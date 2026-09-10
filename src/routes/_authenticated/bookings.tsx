@@ -65,7 +65,7 @@ function BookingsPage() {
             <CardContent className="p-10 text-center">
               <p className="text-muted-foreground">{t("no_tickets")}</p>
               <Button asChild className="mt-5">
-                <Link to="/search" search={{ from: "Chennai", to: "Coimbatore", date: todayISO() }}>
+                <Link to="/search" search={{ from: "Chennai", to: "Coimbatore", date: todayISO(), pax: 1 }}>
                   {t("search_buses")}
                 </Link>
               </Button>

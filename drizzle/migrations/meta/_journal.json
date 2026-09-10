@@ -15,6 +15,13 @@
       "when": 1788711609193,
       "tag": "0001_wallet_roles_tracking",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789049211621,
+      "tag": "0002_tn_locations_network",
+      "breakpoints": true
     }
   ]
 }

@@ -85,6 +85,95 @@ export type Database = {
           },
         ]
       }
+      location_points: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          landmark: string
+          lat: number | null
+          lng: number | null
+          location_id: string
+          name_en: string
+          name_ta: string
+          point_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          landmark?: string
+          lat?: number | null
+          lng?: number | null
+          location_id: string
+          name_en: string
+          name_ta?: string
+          point_type?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          landmark?: string
+          lat?: number | null
+          lng?: number | null
+          location_id?: string
+          name_en?: string
+          name_ta?: string
+          point_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_points_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          aliases: string[]
+          created_at: string
+          district: string
+          id: string
+          is_active: boolean
+          kind: string
+          lat: number | null
+          lng: number | null
+          name_en: string
+          name_ta: string
+          state: string
+        }
+        Insert: {
+          aliases?: string[]
+          created_at?: string
+          district?: string
+          id?: string
+          is_active?: boolean
+          kind?: string
+          lat?: number | null
+          lng?: number | null
+          name_en: string
+          name_ta?: string
+          state?: string
+        }
+        Update: {
+          aliases?: string[]
+          created_at?: string
+          district?: string
+          id?: string
+          is_active?: boolean
+          kind?: string
+          lat?: number | null
+          lng?: number | null
+          name_en?: string
+          name_ta?: string
+          state?: string
+        }
+        Relationships: []
+      }
       operators: {
         Row: {
           created_at: string
@@ -138,11 +227,15 @@ export type Database = {
       }
       trips: {
         Row: {
+          ac: boolean
           amenities: string[]
           arrive_at: string
+          berth_type: string
           boarding_points: string[]
           booked_seats: string[]
+          bus_number: string
           bus_type: string
+          cancellation_policy: string
           created_at: string
           delay_mins: number
           demand_level: string
@@ -150,11 +243,13 @@ export type Database = {
           dropping_points: string[]
           fare: number
           from_city: string
+          from_location_id: string | null
           id: string
           live_tracking: boolean
           operator_id: string
           rating: number
           to_city: string
+          to_location_id: string | null
           total_seats: number
           tracking_note: string | null
           trip_status: string
@@ -162,11 +257,15 @@ export type Database = {
           women_safe: boolean
         }
         Insert: {
+          ac?: boolean
           amenities?: string[]
           arrive_at: string
+          berth_type?: string
           boarding_points?: string[]
           booked_seats?: string[]
+          bus_number?: string
           bus_type: string
+          cancellation_policy?: string
           created_at?: string
           delay_mins?: number
           demand_level?: string
@@ -174,11 +273,13 @@ export type Database = {
           dropping_points?: string[]
           fare: number
           from_city: string
+          from_location_id?: string | null
           id?: string
           live_tracking?: boolean
           operator_id: string
           rating?: number
           to_city: string
+          to_location_id?: string | null
           total_seats?: number
           tracking_note?: string | null
           trip_status?: string
@@ -186,11 +287,15 @@ export type Database = {
           women_safe?: boolean
         }
         Update: {
+          ac?: boolean
           amenities?: string[]
           arrive_at?: string
+          berth_type?: string
           boarding_points?: string[]
           booked_seats?: string[]
+          bus_number?: string
           bus_type?: string
+          cancellation_policy?: string
           created_at?: string
           delay_mins?: number
           demand_level?: string
@@ -198,11 +303,13 @@ export type Database = {
           dropping_points?: string[]
           fare?: number
           from_city?: string
+          from_location_id?: string | null
           id?: string
           live_tracking?: boolean
           operator_id?: string
           rating?: number
           to_city?: string
+          to_location_id?: string | null
           total_seats?: number
           tracking_note?: string | null
           trip_status?: string
@@ -211,10 +318,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "trips_from_location_id_fkey"
+            columns: ["from_location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "trips_operator_id_fkey"
             columns: ["operator_id"]
             isOneToOne: false
             referencedRelation: "operators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trips_to_location_id_fkey"
+            columns: ["to_location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
             referencedColumns: ["id"]
           },
         ]

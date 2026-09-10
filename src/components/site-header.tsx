@@ -40,7 +40,7 @@ export function SiteHeader() {
       </Link>
       <Link
         to="/search"
-        search={{ from: "Chennai", to: "Coimbatore", date: new Date().toISOString().slice(0, 10) }}
+        search={{ from: "Chennai", to: "Nagercoil", date: new Date().toISOString().slice(0, 10), pax: 1 }}
         className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
         onClick={() => setOpen(false)}
       >

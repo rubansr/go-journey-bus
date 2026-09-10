@@ -44,12 +44,15 @@ export const Route = createFileRoute("/")({
 });
 
 const POPULAR = [
-  { from: "Chennai", to: "Coimbatore", hours: "8h" },
-  { from: "Chennai", to: "Madurai", hours: "9h" },
-  { from: "Bangalore", to: "Chennai", hours: "7h" },
-  { from: "Chennai", to: "Trichy", hours: "6h" },
-  { from: "Madurai", to: "Chennai", hours: "9h" },
+  { from: "Chennai", to: "Nagercoil", hours: "12h 30m" },
+  { from: "Chennai", to: "Kanyakumari", hours: "13h 30m" },
+  { from: "Chennai", to: "Kaliyakkavilai", hours: "13h" },
+  { from: "Chennai", to: "Madurai", hours: "8h 30m" },
+  { from: "Chennai", to: "Coimbatore", hours: "9h" },
+  { from: "Nagercoil", to: "Coimbatore", hours: "9h" },
   { from: "Chennai", to: "Tirunelveli", hours: "11h" },
+  { from: "Bengaluru", to: "Chennai", hours: "6h" },
+  { from: "Chennai", to: "Trichy", hours: "6h" },
 ];
 
 const AI_FEATURES = [
@@ -146,7 +149,7 @@ function Home() {
               <Link
                 key={`${r.from}-${r.to}`}
                 to="/search"
-                search={{ from: r.from, to: r.to, date: todayISO() }}
+                search={{ from: r.from, to: r.to, date: todayISO(), pax: 1 }}
                 className="group rounded-2xl border border-border bg-card p-5 transition hover:border-primary/50 hover:shadow-lg"
               >
                 <div className="flex items-center justify-between">
@@ -300,7 +303,7 @@ function Home() {
             </p>
           </div>
           <Button asChild size="lg" variant="secondary" className="gap-2">
-            <Link to="/search" search={{ from: "Chennai", to: "Coimbatore", date: todayISO() }}>
+            <Link to="/search" search={{ from: "Chennai", to: "Coimbatore", date: todayISO(), pax: 1 }}>
               <QrCode className="size-4" /> Book your first trip
             </Link>
           </Button>

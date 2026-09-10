@@ -21,17 +21,17 @@ export function SiteFooter() {
           <h3 className="text-sm font-semibold">Travel</h3>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li>
-              <Link to="/search" search={{ from: "Chennai", to: "Coimbatore", date: new Date().toISOString().slice(0, 10) }}>
+              <Link to="/search" search={{ from: "Chennai", to: "Coimbatore", date: new Date().toISOString().slice(0, 10), pax: 1 }}>
                 Chennai → Coimbatore
               </Link>
             </li>
             <li>
-              <Link to="/search" search={{ from: "Chennai", to: "Madurai", date: new Date().toISOString().slice(0, 10) }}>
+              <Link to="/search" search={{ from: "Chennai", to: "Madurai", date: new Date().toISOString().slice(0, 10), pax: 1 }}>
                 Chennai → Madurai
               </Link>
             </li>
             <li>
-              <Link to="/search" search={{ from: "Bangalore", to: "Chennai", date: new Date().toISOString().slice(0, 10) }}>
+              <Link to="/search" search={{ from: "Bengaluru", to: "Chennai", date: new Date().toISOString().slice(0, 10), pax: 1 }}>
                 Bangalore → Chennai
               </Link>
             </li>
