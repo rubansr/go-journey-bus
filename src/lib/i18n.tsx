@@ -147,6 +147,12 @@ const dict: Dict = {
   welcome_back: { en: "Welcome back", ta: "மீண்டும் வருக" },
   continue_google: { en: "Continue with Google", ta: "Google மூலம் தொடரவும்" },
   loading: { en: "Loading…", ta: "ஏற்றுகிறது…" },
+  use_my_location: { en: "Use my location", ta: "என் இருப்பிடம்" },
+  recent_places: { en: "Recent places", ta: "சமீபத்திய இடங்கள்" },
+  swap_places: { en: "Swap places", ta: "இடங்களை மாற்று" },
+  day_after: { en: "Day after", ta: "நாளை மறுநாள்" },
+  cheapest_tag: { en: "Lowest fare", ta: "குறைந்த கட்டணம்" },
+  women_friendly: { en: "Women friendly", ta: "பெண்களுக்கு பாதுகாப்பு" },
 };
 
 type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (k: keyof typeof dict | string) => string };
