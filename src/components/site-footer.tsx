@@ -31,7 +31,7 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link to="/search" search={{ from: "Bangalore", to: "Chennai", date: new Date().toISOString().slice(0, 10), pax: 1 }}>
+              <Link to="/search" search={{ from: "Bengaluru", to: "Chennai", date: new Date().toISOString().slice(0, 10), pax: 1 }}>
                 Bangalore → Chennai
               </Link>
             </li>

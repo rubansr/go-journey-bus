@@ -44,12 +44,15 @@ export const Route = createFileRoute("/")({
 });
 
 const POPULAR = [
-  { from: "Chennai", to: "Coimbatore", hours: "8h" },
-  { from: "Chennai", to: "Madurai", hours: "9h" },
-  { from: "Bangalore", to: "Chennai", hours: "7h" },
-  { from: "Chennai", to: "Trichy", hours: "6h" },
-  { from: "Madurai", to: "Chennai", hours: "9h" },
+  { from: "Chennai", to: "Nagercoil", hours: "12h 30m" },
+  { from: "Chennai", to: "Kanyakumari", hours: "13h 30m" },
+  { from: "Chennai", to: "Kaliyakkavilai", hours: "13h" },
+  { from: "Chennai", to: "Madurai", hours: "8h 30m" },
+  { from: "Chennai", to: "Coimbatore", hours: "9h" },
+  { from: "Nagercoil", to: "Coimbatore", hours: "9h" },
   { from: "Chennai", to: "Tirunelveli", hours: "11h" },
+  { from: "Bengaluru", to: "Chennai", hours: "6h" },
+  { from: "Chennai", to: "Trichy", hours: "6h" },
 ];
 
 const AI_FEATURES = [
