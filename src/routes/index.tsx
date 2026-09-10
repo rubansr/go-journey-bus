@@ -146,7 +146,7 @@ function Home() {
               <Link
                 key={`${r.from}-${r.to}`}
                 to="/search"
-                search={{ from: r.from, to: r.to, date: todayISO() }}
+                search={{ from: r.from, to: r.to, date: todayISO(), pax: 1 }}
                 className="group rounded-2xl border border-border bg-card p-5 transition hover:border-primary/50 hover:shadow-lg"
               >
                 <div className="flex items-center justify-between">
@@ -300,7 +300,7 @@ function Home() {
             </p>
           </div>
           <Button asChild size="lg" variant="secondary" className="gap-2">
-            <Link to="/search" search={{ from: "Chennai", to: "Coimbatore", date: todayISO() }}>
+            <Link to="/search" search={{ from: "Chennai", to: "Coimbatore", date: todayISO(), pax: 1 }}>
               <QrCode className="size-4" /> Book your first trip
             </Link>
           </Button>
