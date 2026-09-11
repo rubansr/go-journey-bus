@@ -146,6 +146,29 @@ function TicketPage() {
     now,
   );
 
+  const ticketData: TicketData = {
+    pnr: booking.pnr,
+    bookingId: booking.id,
+    fromCity: trip.from_city,
+    toCity: trip.to_city,
+    operator: trip.operators?.name ?? "NXTIXA Go",
+    busType: trip.bus_type,
+    busNumber: trip.bus_number,
+    departAt: trip.depart_at,
+    arriveAt: trip.arrive_at,
+    boarding: booking.boarding_point ?? "",
+    dropping: booking.dropping_point ?? "",
+    seats: booking.seats,
+    passengers,
+    total: Number(booking.total_amount),
+    walletAmount: Number(booking.wallet_amount),
+    paymentMethod: booking.payment_method,
+    status: cancelled ? "Cancelled" : "Confirmed",
+    contactPhone: booking.contact_phone,
+    contactEmail: booking.contact_email,
+  };
+
+
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-10">
       <Link to="/bookings" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
