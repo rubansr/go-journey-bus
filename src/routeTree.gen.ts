@@ -15,6 +15,8 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedBookingsRouteImport } from './routes/_authenticated/bookings'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as AuthenticatedPassengersRouteImport } from './routes/_authenticated/passengers'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as TripTripIdRouteImport } from './routes/trip.$tripId'
@@ -49,6 +51,17 @@ const AuthenticatedBookingsRoute = AuthenticatedBookingsRouteImport.update({
   path: '/bookings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPassengersRoute = AuthenticatedPassengersRouteImport.update({
+  id: '/passengers',
+  path: '/passengers',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
@@ -77,6 +90,8 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/bookings': typeof AuthenticatedBookingsRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
+  '/passengers': typeof AuthenticatedPassengersRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/api/chat': typeof ApiChatRoute
   '/trip/$tripId': typeof TripTripIdRoute
@@ -88,6 +103,8 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/bookings': typeof AuthenticatedBookingsRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
+  '/passengers': typeof AuthenticatedPassengersRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/api/chat': typeof ApiChatRoute
   '/trip/$tripId': typeof TripTripIdRoute
@@ -101,6 +118,8 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/bookings': typeof AuthenticatedBookingsRoute
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
+  '/_authenticated/passengers': typeof AuthenticatedPassengersRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/api/chat': typeof ApiChatRoute
   '/trip/$tripId': typeof TripTripIdRoute
@@ -114,6 +133,8 @@ export interface FileRouteTypes {
     | '/search'
     | '/admin'
     | '/bookings'
+    | '/notifications'
+    | '/passengers'
     | '/wallet'
     | '/api/chat'
     | '/trip/$tripId'
@@ -125,6 +146,8 @@ export interface FileRouteTypes {
     | '/search'
     | '/admin'
     | '/bookings'
+    | '/notifications'
+    | '/passengers'
     | '/wallet'
     | '/api/chat'
     | '/trip/$tripId'
@@ -137,6 +160,8 @@ export interface FileRouteTypes {
     | '/search'
     | '/_authenticated/admin'
     | '/_authenticated/bookings'
+    | '/_authenticated/notifications'
+    | '/_authenticated/passengers'
     | '/_authenticated/wallet'
     | '/api/chat'
     | '/trip/$tripId'
@@ -196,6 +221,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBookingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/passengers': {
+      id: '/_authenticated/passengers'
+      path: '/passengers'
+      fullPath: '/passengers'
+      preLoaderRoute: typeof AuthenticatedPassengersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/wallet': {
       id: '/_authenticated/wallet'
       path: '/wallet'
@@ -230,6 +269,8 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedBookingsRoute: typeof AuthenticatedBookingsRoute
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
+  AuthenticatedPassengersRoute: typeof AuthenticatedPassengersRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedTicketBookingIdRoute: typeof AuthenticatedTicketBookingIdRoute
 }
@@ -237,6 +278,8 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedBookingsRoute: AuthenticatedBookingsRoute,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
+  AuthenticatedPassengersRoute: AuthenticatedPassengersRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedTicketBookingIdRoute: AuthenticatedTicketBookingIdRoute,
 }

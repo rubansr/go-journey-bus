@@ -11,18 +11,25 @@ import {
   Clock,
   Download,
   MapPin,
+  MessageCircle,
+  Printer,
   Share2,
   Wallet,
+  WifiOff,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SosSafety } from "@/components/sos-safety";
 import { supabase } from "@/integrations/supabase/client";
 import { durationLabel, formatDay, formatTime, inr } from "@/lib/booking";
+import { saveOfflineTicket } from "@/lib/offline-tickets";
+import { downloadTicketPdf, qrDataUrl, ticketSummary, whatsappShareUrl, type TicketData } from "@/lib/ticket-pdf";
 import { trackTrip } from "@/lib/tracking";
 import { useI18n } from "@/lib/i18n";
+
 
 export const Route = createFileRoute("/_authenticated/ticket/$bookingId")({
   head: () => ({
@@ -138,6 +145,29 @@ function TicketPage() {
     },
     now,
   );
+
+  const ticketData: TicketData = {
+    pnr: booking.pnr,
+    bookingId: booking.id,
+    fromCity: trip.from_city,
+    toCity: trip.to_city,
+    operator: trip.operators?.name ?? "NXTIXA Go",
+    busType: trip.bus_type,
+    busNumber: trip.bus_number,
+    departAt: trip.depart_at,
+    arriveAt: trip.arrive_at,
+    boarding: booking.boarding_point ?? "",
+    dropping: booking.dropping_point ?? "",
+    seats: booking.seats,
+    passengers,
+    total: Number(booking.total_amount),
+    walletAmount: Number(booking.wallet_amount),
+    paymentMethod: booking.payment_method,
+    status: cancelled ? "Cancelled" : "Confirmed",
+    contactPhone: booking.contact_phone,
+    contactEmail: booking.contact_email,
+  };
+
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-10">
@@ -294,16 +324,45 @@ function TicketPage() {
             />
             <p className="text-xs text-muted-foreground">{t("show_at_boarding")}</p>
             <div className="mt-2 flex w-full flex-col gap-2">
+              <Button
+                className="gap-2"
+                onClick={async () => {
+                  await downloadTicketPdf(ticketData);
+                  toast.success(t("pdf_ready"));
+                }}
+              >
+                <Download className="size-4" /> {t("download_pdf")}
+              </Button>
               <Button variant="outline" className="gap-2" onClick={() => window.print()}>
-                <Download className="size-4" /> {t("download_ticket")}
+                <Printer className="size-4" /> {t("print_ticket")}
+              </Button>
+              <Button asChild variant="outline" className="gap-2">
+                <a
+                  href={whatsappShareUrl(
+                    ticketData,
+                    typeof window !== "undefined" ? window.location.href : undefined,
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="size-4" /> {t("send_whatsapp")}
+                </a>
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={async () => {
+                  saveOfflineTicket(ticketData, await qrDataUrl(booking.pnr));
+                  toast.success(t("saved_offline"));
+                }}
+              >
+                <WifiOff className="size-4" /> {t("save_offline")}
               </Button>
               <Button
                 variant="outline"
                 className="gap-2"
                 onClick={() => {
-                  void navigator.clipboard?.writeText(
-                    `NXTIXA Go · PNR ${booking.pnr} · ${trip.from_city} → ${trip.to_city} · ${formatDay(trip.depart_at)} ${formatTime(trip.depart_at)}`,
-                  );
+                  void navigator.clipboard?.writeText(ticketSummary(ticketData));
                   toast.success(t("copied"));
                 }}
               >
@@ -316,12 +375,25 @@ function TicketPage() {
               )}
             </div>
             {!cancelled && <p className="text-center text-xs text-muted-foreground">{t("refund_policy")}</p>}
+            <p className="text-center text-xs text-muted-foreground">{t("offline_note")}</p>
           </CardContent>
         </Card>
       </div>
+
+      {!cancelled && (
+        <div className="mt-5 lg:max-w-md">
+          <SosSafety
+            bookingId={booking.id}
+            tripLabel={`${trip.from_city} → ${trip.to_city} (PNR ${booking.pnr})`}
+            seats={booking.seats}
+          />
+        </div>
+      )}
     </div>
   );
 }
+
+
 
 function Stat({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
