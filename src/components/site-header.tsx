@@ -62,6 +62,25 @@ export function SiteHeader() {
           {t("nav_wallet")}
         </Link>
       )}
+      {user && (
+        <Link
+          to="/passengers"
+          className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+          onClick={() => setOpen(false)}
+        >
+          {t("nav_passengers")}
+        </Link>
+      )}
+      {user && (
+        <Link
+          to="/notifications"
+          className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+          onClick={() => setOpen(false)}
+        >
+          {t("notifications")}
+        </Link>
+      )}
+
       {isStaff && (
         <Link
           to="/admin"
