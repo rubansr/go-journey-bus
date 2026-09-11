@@ -85,6 +85,33 @@ export type Database = {
           },
         ]
       }
+      emergency_contacts: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          phone: string
+          relation: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          phone: string
+          relation?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string
+          relation?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       location_points: {
         Row: {
           created_at: string
@@ -174,6 +201,39 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          body: string
+          booking_id: string | null
+          created_at: string
+          id: string
+          kind: string
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       operators: {
         Row: {
           created_at: string
@@ -201,6 +261,77 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_attempts: {
+        Row: {
+          amount: number
+          attempts: number
+          boarding_point: string
+          booking_id: string | null
+          contact_email: string
+          contact_phone: string
+          created_at: string
+          dropping_point: string
+          id: string
+          last_error: string
+          passengers: Json
+          payment_method: string
+          seats: string[]
+          status: string
+          trip_id: string
+          updated_at: string
+          use_wallet: boolean
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          attempts?: number
+          boarding_point?: string
+          booking_id?: string | null
+          contact_email?: string
+          contact_phone?: string
+          created_at?: string
+          dropping_point?: string
+          id?: string
+          last_error?: string
+          passengers?: Json
+          payment_method?: string
+          seats: string[]
+          status?: string
+          trip_id: string
+          updated_at?: string
+          use_wallet?: boolean
+          user_id?: string
+        }
+        Update: {
+          amount?: number
+          attempts?: number
+          boarding_point?: string
+          booking_id?: string | null
+          contact_email?: string
+          contact_phone?: string
+          created_at?: string
+          dropping_point?: string
+          id?: string
+          last_error?: string
+          passengers?: Json
+          payment_method?: string
+          seats?: string[]
+          status?: string
+          trip_id?: string
+          updated_at?: string
+          use_wallet?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_attempts_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -222,6 +353,102 @@ export type Database = {
           id?: string
           language?: string
           phone?: string | null
+        }
+        Relationships: []
+      }
+      safety_reports: {
+        Row: {
+          booking_id: string | null
+          category: string
+          created_at: string
+          id: string
+          message: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          booking_id?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          message?: string
+          status?: string
+          user_id?: string
+        }
+        Update: {
+          booking_id?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          message?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      saved_passengers: {
+        Row: {
+          age: number
+          created_at: string
+          gender: string
+          id: string
+          name: string
+          phone: string
+          relation: string
+          user_id: string
+        }
+        Insert: {
+          age?: number
+          created_at?: string
+          gender?: string
+          id?: string
+          name: string
+          phone?: string
+          relation?: string
+          user_id?: string
+        }
+        Update: {
+          age?: number
+          created_at?: string
+          gender?: string
+          id?: string
+          name?: string
+          phone?: string
+          relation?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      support_tickets: {
+        Row: {
+          booking_id: string | null
+          created_at: string
+          id: string
+          kind: string
+          message: string
+          status: string
+          subject: string
+          user_id: string
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string
+          status?: string
+          subject: string
+          user_id?: string
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string
+          status?: string
+          subject?: string
+          user_id?: string
         }
         Relationships: []
       }

@@ -22,6 +22,13 @@
       "when": 1789049211621,
       "tag": "0002_tn_locations_network",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789139337120,
+      "tag": "0003_passengers_notifications_safety_recovery",
+      "breakpoints": true
     }
   ]
 }
