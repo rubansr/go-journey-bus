@@ -294,16 +294,45 @@ function TicketPage() {
             />
             <p className="text-xs text-muted-foreground">{t("show_at_boarding")}</p>
             <div className="mt-2 flex w-full flex-col gap-2">
+              <Button
+                className="gap-2"
+                onClick={async () => {
+                  await downloadTicketPdf(ticketData);
+                  toast.success(t("pdf_ready"));
+                }}
+              >
+                <Download className="size-4" /> {t("download_pdf")}
+              </Button>
               <Button variant="outline" className="gap-2" onClick={() => window.print()}>
-                <Download className="size-4" /> {t("download_ticket")}
+                <Printer className="size-4" /> {t("print_ticket")}
+              </Button>
+              <Button asChild variant="outline" className="gap-2">
+                <a
+                  href={whatsappShareUrl(
+                    ticketData,
+                    typeof window !== "undefined" ? window.location.href : undefined,
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="size-4" /> {t("send_whatsapp")}
+                </a>
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={async () => {
+                  saveOfflineTicket(ticketData, await qrDataUrl(booking.pnr));
+                  toast.success(t("saved_offline"));
+                }}
+              >
+                <WifiOff className="size-4" /> {t("save_offline")}
               </Button>
               <Button
                 variant="outline"
                 className="gap-2"
                 onClick={() => {
-                  void navigator.clipboard?.writeText(
-                    `NXTIXA Go · PNR ${booking.pnr} · ${trip.from_city} → ${trip.to_city} · ${formatDay(trip.depart_at)} ${formatTime(trip.depart_at)}`,
-                  );
+                  void navigator.clipboard?.writeText(ticketSummary(ticketData));
                   toast.success(t("copied"));
                 }}
               >
@@ -316,6 +345,24 @@ function TicketPage() {
               )}
             </div>
             {!cancelled && <p className="text-center text-xs text-muted-foreground">{t("refund_policy")}</p>}
+            <p className="text-center text-xs text-muted-foreground">{t("offline_note")}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {!cancelled && (
+        <div className="mt-5 lg:max-w-md">
+          <SosSafety
+            bookingId={booking.id}
+            tripLabel={`${trip.from_city} → ${trip.to_city} (PNR ${booking.pnr})`}
+            seats={booking.seats}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
           </CardContent>
         </Card>
       </div>
