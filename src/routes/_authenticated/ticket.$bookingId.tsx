@@ -11,18 +11,25 @@ import {
   Clock,
   Download,
   MapPin,
+  MessageCircle,
+  Printer,
   Share2,
   Wallet,
+  WifiOff,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SosSafety } from "@/components/sos-safety";
 import { supabase } from "@/integrations/supabase/client";
 import { durationLabel, formatDay, formatTime, inr } from "@/lib/booking";
+import { saveOfflineTicket } from "@/lib/offline-tickets";
+import { downloadTicketPdf, qrDataUrl, ticketSummary, whatsappShareUrl, type TicketData } from "@/lib/ticket-pdf";
 import { trackTrip } from "@/lib/tracking";
 import { useI18n } from "@/lib/i18n";
+
 
 export const Route = createFileRoute("/_authenticated/ticket/$bookingId")({
   head: () => ({
