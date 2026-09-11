@@ -363,12 +363,7 @@ function TicketPage() {
   );
 }
 
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-}
+
 
 function Stat({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
