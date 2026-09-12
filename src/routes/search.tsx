@@ -79,7 +79,7 @@ function SearchPage() {
       const end = new Date(`${date}T23:59:59`).toISOString();
       const { data, error } = await supabase
         .from("trips")
-        .select("*, operators(name, rating, verified)")
+        .select("*, operators(name, rating, verified, review_count, trust_score)")
         .ilike("from_city", from)
         .ilike("to_city", to)
         .gte("depart_at", start)
@@ -197,7 +197,13 @@ function SearchPage() {
                       </Badge>
                     )}
                     <Badge variant="outline" className="gap-1">
-                      <Star className="size-3.5 fill-warning text-warning" /> {Number(trip.rating).toFixed(1)}
+                      <Star className="size-3.5 fill-warning text-warning" />{" "}
+                      {Number(trip.operators?.rating ?? trip.rating).toFixed(1)}
+                      {(trip.operators?.review_count ?? 0) > 0 && (
+                        <span className="text-muted-foreground">
+                          ({trip.operators?.review_count} {lang === "ta" ? "மதிப்பீடு" : "reviews"})
+                        </span>
+                      )}
                     </Badge>
                     {isCheapest && (
                       <Badge className="bg-success/15 text-success hover:bg-success/15">{t("cheapest_tag")}</Badge>
