@@ -40,7 +40,7 @@
 
 ## Real-world integrations (new brief)
 - [x] AI identity rules (founder RUBAN S R contact answers) in chat
-- [ ] Verified review system (completed-trip-only reviews, badges, moderation, trust score)
+- [x] Verified review system (completed-trip-only reviews, verified badges, moderation, trust score)
 - [ ] Real GPS map tracking (needs map token; driver sharing + ETA)
 - [ ] Razorpay payments (UPI/cards/netbanking, webhooks, auto-refund) — needs keys
 - [ ] WhatsApp/SMS notifications — needs provider credentials
