@@ -554,3 +554,107 @@ function CitySelect({ label, value, onChange }: { label: string; value: string; 
     </div>
   );
 }
+
+function ReviewModeration({ isAdmin }: { isAdmin: boolean }) {
+  const queryClient = useQueryClient();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["staff-reviews"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select("id, rating, comment, tags, reviewer_name, status, created_at, operators(name)")
+        .order("created_at", { ascending: false })
+        .limit(60);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  async function setStatus(id: string, status: "published" | "flagged" | "hidden") {
+    const { error } = await supabase.from("reviews").update({ status }).eq("id", id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(`Review ${status}`);
+    await queryClient.invalidateQueries({ queryKey: ["staff-reviews"] });
+  }
+
+  const reviews = data ?? [];
+  const published = reviews.filter((r) => r.status === "published");
+  const average = published.length ? published.reduce((s, r) => s + r.rating, 0) / published.length : 0;
+
+  if (isLoading) return <Skeleton className="h-64 rounded-2xl" />;
+
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Published reviews</p>
+            <p className="text-2xl font-bold">{published.length}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Average rating</p>
+            <p className="text-2xl font-bold">{average ? average.toFixed(1) : "—"}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Needs attention</p>
+            <p className="text-2xl font-bold">{reviews.filter((r) => r.status !== "published").length}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {reviews.length === 0 && (
+        <Card>
+          <CardContent className="p-8 text-center text-sm text-muted-foreground">No reviews yet.</CardContent>
+        </Card>
+      )}
+
+      {reviews.map((r) => (
+        <Card key={r.id}>
+          <CardContent className="flex flex-wrap items-start justify-between gap-4 p-4">
+            <div className="min-w-56 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline">{r.rating}/5</Badge>
+                <span className="text-sm font-medium">{r.operators?.name ?? "—"}</span>
+                <span className="text-xs text-muted-foreground">
+                  {r.reviewer_name ?? "Traveller"} · {formatDay(r.created_at)}
+                </span>
+                <Badge variant={r.status === "published" ? "secondary" : "destructive"}>{r.status}</Badge>
+              </div>
+              {r.comment && <p className="mt-1.5 text-sm text-muted-foreground">{r.comment}</p>}
+              {r.tags.length > 0 && (
+                <p className="mt-1 text-xs text-muted-foreground">{r.tags.join(" · ").replace(/_/g, " ")}</p>
+              )}
+            </div>
+            {isAdmin && (
+              <div className="flex flex-wrap gap-2">
+                {r.status !== "published" && (
+                  <Button size="sm" variant="outline" onClick={() => setStatus(r.id, "published")}>
+                    Publish
+                  </Button>
+                )}
+                {r.status !== "flagged" && (
+                  <Button size="sm" variant="outline" onClick={() => setStatus(r.id, "flagged")}>
+                    Flag
+                  </Button>
+                )}
+                {r.status !== "hidden" && (
+                  <Button size="sm" variant="destructive" onClick={() => setStatus(r.id, "hidden")}>
+                    Hide
+                  </Button>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
