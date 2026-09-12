@@ -38,6 +38,15 @@
 - [ ] Fare advice, boarding guidance, tracking answers, best-pick modes
 - [ ] Natural-language search prefill (Tamil/English/Tanglish)
 
+## Real-world integrations (new brief)
+- [x] AI identity rules (founder RUBAN S R contact answers) in chat
+- [ ] Verified review system (completed-trip-only reviews, badges, moderation, trust score)
+- [ ] Real GPS map tracking (needs map token; driver sharing + ETA)
+- [ ] Razorpay payments (UPI/cards/netbanking, webhooks, auto-refund) — needs keys
+- [ ] WhatsApp/SMS notifications — needs provider credentials
+- [ ] Review analytics in admin portal
+
 ## Blocked / needs input
+- Razorpay Key ID + Key Secret (for real payments)
 - WhatsApp delivery credentials (Twilio or Meta Cloud API)
 - Map tile token for real maps (otherwise stylised route progress)
