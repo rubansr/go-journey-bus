@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Armchair, Download, MapPin, Navigation, Share2, Wallet } from "lucide-react";
 
+import { ReviewForm } from "@/components/review-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -77,6 +78,7 @@ function BookingsPage() {
           const trip = b.trips;
           const cancelled = b.status === "cancelled";
           const passengers = (b.passengers as Passenger[]) ?? [];
+          const completed = !cancelled && !!trip && new Date(trip.arrive_at).getTime() < Date.now();
           return (
             <Card key={b.id} className={cancelled ? "opacity-70" : undefined}>
               <CardContent className="grid gap-6 p-6 sm:grid-cols-[1fr_auto]">
@@ -148,12 +150,21 @@ function BookingsPage() {
                     >
                       <Share2 className="size-4" /> Share
                     </Button>
-                    {!cancelled && (
+                    {!cancelled && !completed && (
                       <Button variant="destructive" size="sm" onClick={() => cancel(b.id)}>
                         {t("cancel_ticket")}
                       </Button>
                     )}
                   </div>
+
+                  {completed && trip && (
+                    <ReviewForm
+                      bookingId={b.id}
+                      tripId={trip.id}
+                      operatorId={trip.operator_id}
+                      operatorName={trip.operators?.name}
+                    />
+                  )}
                 </div>
 
                 <div className="flex flex-col items-center justify-center gap-2">
