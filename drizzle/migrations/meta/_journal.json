@@ -29,6 +29,13 @@
       "when": 1789139337120,
       "tag": "0003_passengers_notifications_safety_recovery",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789229810159,
+      "tag": "0004_verified_reviews",
+      "breakpoints": true
     }
   ]
 }

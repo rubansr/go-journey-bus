@@ -240,7 +240,9 @@ export type Database = {
           id: string
           name: string
           rating: number
+          review_count: number
           total_trips: number
+          trust_score: number
           verified: boolean
         }
         Insert: {
@@ -248,7 +250,9 @@ export type Database = {
           id?: string
           name: string
           rating?: number
+          review_count?: number
           total_trips?: number
+          trust_score?: number
           verified?: boolean
         }
         Update: {
@@ -256,7 +260,9 @@ export type Database = {
           id?: string
           name?: string
           rating?: number
+          review_count?: number
           total_trips?: number
+          trust_score?: number
           verified?: boolean
         }
         Relationships: []
@@ -355,6 +361,82 @@ export type Database = {
           phone?: string | null
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          booking_id: string
+          cleanliness: number | null
+          comfort: number | null
+          comment: string | null
+          created_at: string
+          id: string
+          operator_id: string | null
+          punctuality: number | null
+          rating: number
+          reviewer_name: string | null
+          staff: number | null
+          status: string
+          tags: string[]
+          trip_id: string | null
+          user_id: string
+        }
+        Insert: {
+          booking_id: string
+          cleanliness?: number | null
+          comfort?: number | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          operator_id?: string | null
+          punctuality?: number | null
+          rating: number
+          reviewer_name?: string | null
+          staff?: number | null
+          status?: string
+          tags?: string[]
+          trip_id?: string | null
+          user_id: string
+        }
+        Update: {
+          booking_id?: string
+          cleanliness?: number | null
+          comfort?: number | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          operator_id?: string | null
+          punctuality?: number | null
+          rating?: number
+          reviewer_name?: string | null
+          staff?: number | null
+          status?: string
+          tags?: string[]
+          trip_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_operator_id_fkey"
+            columns: ["operator_id"]
+            isOneToOne: false
+            referencedRelation: "operators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       safety_reports: {
         Row: {
@@ -681,6 +763,7 @@ export type Database = {
         }
       }
       bootstrap_admin: { Args: never; Returns: boolean }
+      can_review_booking: { Args: { p_booking_id: string }; Returns: boolean }
       cancel_booking: {
         Args: { p_booking_id: string }
         Returns: {
