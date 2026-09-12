@@ -52,6 +52,7 @@ const dict: Dict = {
   tab_schedules: { en: "Schedules", ta: "அட்டவணை" },
   tab_inventory: { en: "Bus inventory", ta: "பேருந்து பட்டியல்" },
   tab_bookings: { en: "Bookings", ta: "முன்பதிவுகள்" },
+  tab_reviews: { en: "Reviews", ta: "மதிப்பீடுகள்" },
   schedule_updated: { en: "Schedule updated", ta: "அட்டவணை புதுப்பிக்கப்பட்டது" },
   schedule_added: { en: "Schedule published", ta: "அட்டவணை வெளியிடப்பட்டது" },
   add_schedule: { en: "Add schedule", ta: "அட்டவணை சேர்" },
