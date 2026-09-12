@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BrainCircuit, CreditCard, Loader2, Lock, ShieldCheck, Sparkles } from "lucide-react";
 
+import { OperatorReviews } from "@/components/operator-reviews";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -65,7 +66,7 @@ function TripPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("trips")
-        .select("*, operators(name, rating, verified)")
+        .select("*, operators(name, rating, verified, review_count, trust_score)")
         .eq("id", tripId)
         .maybeSingle();
       if (error) throw error;
@@ -433,8 +434,14 @@ function TripPage() {
               </p>
             </CardContent>
           </Card>
-        </div>
+         </div>
       </div>
+
+      {trip.operator_id && (
+        <div className="mt-6">
+          <OperatorReviews operatorId={trip.operator_id} trustScore={trip.operators?.trust_score} />
+        </div>
+      )}
     </div>
   );
 }
