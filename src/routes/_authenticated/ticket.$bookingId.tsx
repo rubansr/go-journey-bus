@@ -23,6 +23,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SosSafety } from "@/components/sos-safety";
+import { LiveTracking } from "@/components/live-tracking";
+
 import { supabase } from "@/integrations/supabase/client";
 import { durationLabel, formatDay, formatTime, inr } from "@/lib/booking";
 import { saveOfflineTicket } from "@/lib/offline-tickets";
@@ -177,6 +179,21 @@ function TicketPage() {
 
       <div className="mt-4 grid gap-5 lg:grid-cols-[1.4fr_1fr]">
         <div className="space-y-5">
+          <LiveTracking
+            trip={{
+              id: trip.id,
+              from_city: trip.from_city,
+              to_city: trip.to_city,
+              from_location_id: trip.from_location_id,
+              to_location_id: trip.to_location_id,
+              depart_at: trip.depart_at,
+              arrive_at: trip.arrive_at,
+              delay_mins: trip.delay_mins,
+              bus_number: trip.bus_number,
+            }}
+            boardingPoint={booking.boarding_point}
+          />
+
           <Card>
             <CardContent className="p-6">
               <div className="flex flex-wrap items-center gap-2">

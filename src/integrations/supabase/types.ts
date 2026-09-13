@@ -85,6 +85,53 @@ export type Database = {
           },
         ]
       }
+      bus_locations: {
+        Row: {
+          accuracy_m: number | null
+          heading: number
+          id: string
+          lat: number
+          lng: number
+          recorded_at: string
+          recorded_by: string | null
+          source: string
+          speed_kmph: number
+          trip_id: string
+        }
+        Insert: {
+          accuracy_m?: number | null
+          heading?: number
+          id?: string
+          lat: number
+          lng: number
+          recorded_at?: string
+          recorded_by?: string | null
+          source?: string
+          speed_kmph?: number
+          trip_id: string
+        }
+        Update: {
+          accuracy_m?: number | null
+          heading?: number
+          id?: string
+          lat?: number
+          lng?: number
+          recorded_at?: string
+          recorded_by?: string | null
+          source?: string
+          speed_kmph?: number
+          trip_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bus_locations_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       emergency_contacts: {
         Row: {
           created_at: string
@@ -111,6 +158,71 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      families: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          owner_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          owner_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          owner_id?: string
+        }
+        Relationships: []
+      }
+      family_members: {
+        Row: {
+          created_at: string
+          display_name: string
+          family_id: string
+          id: string
+          invited_email: string | null
+          role: string
+          share_location: boolean
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string
+          family_id: string
+          id?: string
+          invited_email?: string | null
+          role?: string
+          share_location?: boolean
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          family_id?: string
+          id?: string
+          invited_email?: string | null
+          role?: string
+          share_location?: boolean
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_members_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       location_points: {
         Row: {
@@ -362,6 +474,79 @@ export type Database = {
         }
         Relationships: []
       }
+      recovery_cases: {
+        Row: {
+          amount: number
+          attempt_id: string | null
+          booking_id: string | null
+          created_at: string
+          duplicate_of: string | null
+          id: string
+          money_debited: boolean
+          reference: string
+          resolution: string
+          status: string
+          timeline: Json
+          trip_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          attempt_id?: string | null
+          booking_id?: string | null
+          created_at?: string
+          duplicate_of?: string | null
+          id?: string
+          money_debited?: boolean
+          reference?: string
+          resolution?: string
+          status?: string
+          timeline?: Json
+          trip_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          amount?: number
+          attempt_id?: string | null
+          booking_id?: string | null
+          created_at?: string
+          duplicate_of?: string | null
+          id?: string
+          money_debited?: boolean
+          reference?: string
+          resolution?: string
+          status?: string
+          timeline?: Json
+          trip_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recovery_cases_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "payment_attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recovery_cases_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recovery_cases_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           booking_id: string
@@ -434,6 +619,113 @@ export type Database = {
             columns: ["trip_id"]
             isOneToOne: false
             referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reward_accounts: {
+        Row: {
+          lifetime_points: number
+          points: number
+          referral_code: string
+          referred_by: string | null
+          tier: string
+          trips_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          lifetime_points?: number
+          points?: number
+          referral_code?: string
+          referred_by?: string | null
+          tier?: string
+          trips_count?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          lifetime_points?: number
+          points?: number
+          referral_code?: string
+          referred_by?: string | null
+          tier?: string
+          trips_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reward_campaigns: {
+        Row: {
+          bonus_points: number
+          created_at: string
+          description: string
+          ends_at: string
+          id: string
+          is_active: boolean
+          multiplier: number
+          starts_at: string
+          title: string
+        }
+        Insert: {
+          bonus_points?: number
+          created_at?: string
+          description?: string
+          ends_at?: string
+          id?: string
+          is_active?: boolean
+          multiplier?: number
+          starts_at?: string
+          title: string
+        }
+        Update: {
+          bonus_points?: number
+          created_at?: string
+          description?: string
+          ends_at?: string
+          id?: string
+          is_active?: boolean
+          multiplier?: number
+          starts_at?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      reward_events: {
+        Row: {
+          booking_id: string | null
+          created_at: string
+          id: string
+          kind: string
+          note: string
+          points: number
+          user_id: string
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          note?: string
+          points: number
+          user_id: string
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          note?: string
+          points?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_events_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
             referencedColumns: ["id"]
           },
         ]
@@ -723,6 +1015,37 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_family_invite: { Args: { p_family: string }; Returns: undefined }
+      advance_recovery_case: {
+        Args: {
+          p_booking?: string
+          p_case: string
+          p_note?: string
+          p_status: string
+        }
+        Returns: {
+          amount: number
+          attempt_id: string | null
+          booking_id: string | null
+          created_at: string
+          duplicate_of: string | null
+          id: string
+          money_debited: boolean
+          reference: string
+          resolution: string
+          status: string
+          timeline: Json
+          trip_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "recovery_cases"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       book_trip: {
         Args: {
           p_boarding: string
@@ -793,6 +1116,17 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      family_invites_for_me: { Args: never; Returns: string[] }
+      grant_reward_points: {
+        Args: {
+          p_booking?: string
+          p_kind: string
+          p_note?: string
+          p_points: number
+          p_user: string
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -800,6 +1134,51 @@ export type Database = {
         }
         Returns: boolean
       }
+      my_family_ids: { Args: never; Returns: string[] }
+      open_recovery_case: {
+        Args: {
+          p_amount: number
+          p_attempt?: string
+          p_error?: string
+          p_money_debited?: boolean
+          p_trip: string
+        }
+        Returns: {
+          amount: number
+          attempt_id: string | null
+          booking_id: string | null
+          created_at: string
+          duplicate_of: string | null
+          id: string
+          money_debited: boolean
+          reference: string
+          resolution: string
+          status: string
+          timeline: Json
+          trip_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "recovery_cases"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      redeem_reward_points: { Args: { p_points: number }; Returns: number }
+      reward_leaderboard: {
+        Args: never
+        Returns: {
+          is_me: boolean
+          label: string
+          lifetime_points: number
+          rank: number
+          tier: string
+        }[]
+      }
+      reward_tier: { Args: { p_points: number }; Returns: string }
+      shares_family: { Args: { p_other: string }; Returns: boolean }
       topup_wallet: {
         Args: { p_amount: number; p_method?: string }
         Returns: number
