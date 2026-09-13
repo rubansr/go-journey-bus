@@ -23,6 +23,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SosSafety } from "@/components/sos-safety";
+import { LiveTracking } from "@/components/live-tracking";
+
 import { supabase } from "@/integrations/supabase/client";
 import { durationLabel, formatDay, formatTime, inr } from "@/lib/booking";
 import { saveOfflineTicket } from "@/lib/offline-tickets";
